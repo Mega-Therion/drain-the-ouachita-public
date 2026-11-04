@@ -46,6 +46,7 @@ export function ABOUT_HTML(manifest, pois) {
   <li>Lake outline &amp; places: © <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap contributors</a> (ODbL)</li>
   <li>Pool &amp; storage: USACE CWMS, Vicksburg District · History: Encyclopedia of Arkansas</li>
   <li>Fish attractors: Arkansas Game &amp; Fish Commission</li>
+  <li>Land cover (where forests grow): USGS National Land Cover Database 2021 (MRLC), public domain</li>
   <li>Tree heights: Meta &amp; World Resources Institute 1 m global canopy height map (Tolan et al. 2024, CC BY 4.0)</li>
   <li>1890s map layer: USGS Historical Topographic Map Collection (Mount Ida 1890, Hot Springs 1894, Caddo Gap 1906)</li>
   <li>Native American history: Arkansas Archeological Survey, <i>Indian History in the Lake Ouachita Region</i> (M. B. Trubitt) and <i>What's for Supper?</i> (Ouachita Chapter, Arkansas Archeological Society); Encyclopedia of Arkansas. Sites are shown as general areas only; they are protected by law.</li>
