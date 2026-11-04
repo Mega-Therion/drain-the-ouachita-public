@@ -1,0 +1,35 @@
+# Public release checklist
+
+The app is live at https://drain-the-ouachita.vercel.app. Every push to `main` deploys it. The GitHub repo is private. Work through this list before making the repo public, or before promoting the app widely.
+
+## Data integrity (run every time the data changes)
+
+- [ ] `python3 pipeline/validate.py` passes. It checks:
+  - every land marker against the USGS elevation service (3 m tolerance);
+  - each marker's position against its primary source (150 m);
+  - 578 ft storage and area against the USACE figures (1%);
+  - privacy names in `pois.json`, `trails.json` and `photos.json`.
+- [ ] Every source link opens (link audit).
+- [ ] New history text quotes or summarises its cited source and claims nothing the source doesn't say.
+- [ ] Native history markers are general areas only, carry no depth readout, and say so on screen.
+
+## Privacy
+
+- [ ] The private place names and radius live only in the untracked `cache/privacy_blur.json` and in the `ASK_BLOCKLIST` env var on Vercel. Nothing in the tracked code names them.
+- [ ] Earlier commits did contain those names. **Before the repo goes public, publish it from a fresh history** (a new repo with a single squashed commit) rather than flipping this one to public.
+- [ ] No personal contact details anywhere on the site or in the repo.
+
+## Licences and credits
+
+- [ ] About lists: USGS 3DEP and GNIS, Esri/USGS imagery, OpenStreetMap (ODbL), NLCD, the Meta/WRI canopy map (CC BY 4.0), USACE, AGFC, Encyclopedia of Arkansas, Wikipedia (CC BY-SA, summarised), the Arkansas Archeological Survey booklets, Wikimedia Commons (per-photo licence) and the Library of Congress.
+- [ ] Every photo shows its own author and licence in the viewer.
+- [x] Code licence: Apache-2.0 (`LICENSE`, `NOTICE`). Data keeps its own licences, which are listed in the README.
+
+## Product
+
+- [ ] Phone test at about 400 px wide:
+  - info panel, ask box, gallery and viewer;
+  - all tours, including `?tour=doc`, `?tour=west` and `?tour=native`;
+  - share links (`?poi=<id>`).
+- [ ] The AI chat answers on the live site, or degrades to the map's own notes. The free tier allows about 50 AI answers a day.
+- [ ] Optional: ask the Caddo Nation's historic preservation office to review the Native history text.

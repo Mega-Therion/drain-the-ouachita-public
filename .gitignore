@@ -1,0 +1,8 @@
+node_modules/
+cache/
+app/dist/
+app/.vercel/
+.vercel/
+*.log
+__pycache__/
+.env*

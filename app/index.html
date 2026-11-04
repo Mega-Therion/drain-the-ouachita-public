@@ -1,0 +1,270 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="theme-color" content="#0a0f14" />
+  <meta name="description" content="Drain Lake Ouachita: a 3D flyover and walkthrough of Lake Ouachita, Arkansas, built from USGS lidar, with a lake-bed reconstruction you can expose by lowering the water." />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="/manifest.webmanifest" />
+  <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+  <link rel="apple-touch-icon" href="/icon-180.png" />
+  <title>Drain the Ouachita</title>
+  <link rel="stylesheet" href="/src/ui/styles.css" />
+</head>
+<body>
+  <canvas id="c"></canvas>
+  <div id="labels" aria-hidden="true"></div>
+  <div id="ui">
+    <!-- top bar -->
+    <header class="top">
+      <div class="search glass" id="search">
+        <svg viewBox="0 0 24 24" class="ico"><path d="M15.5 14h-.8l-.3-.3A6.5 6.5 0 1 0 14 15.5l.3.3v.8l5 5 1.5-1.5-5-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+        <input id="q" type="search" placeholder="Search Lake Ouachita" autocomplete="off" enterkeyhint="search" />
+        <button class="ib" id="btnMenu" aria-label="Menu"><svg viewBox="0 0 24 24" class="ico"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg></button>
+      </div>
+      <div class="results glass hidden" id="results"></div>
+    </header>
+
+    <!-- right rail -->
+    <nav class="rail">
+      <button class="fab glass" id="btnCompass" aria-label="Reset north"><svg viewBox="0 0 24 24" class="ico compass" id="needle"><path d="M12 2l3.5 10H8.5z" fill="#ff5a4f"/><path d="M12 22l-3.5-10h7z" fill="#dfe8ef"/></svg></button>
+      <button class="fab glass" id="btnLayers" aria-label="Layers"><svg viewBox="0 0 24 24" class="ico"><path d="M12 3 2 8l10 5 10-5-10-5zm-7.6 8.8L2 13l10 5 10-5-2.4-1.2L12 15.6l-7.6-3.8zm0 4L2 17l10 5 10-5-2.4-1.2L12 19.6l-7.6-3.8z"/></svg></button>
+      <button class="fab glass" id="btnDial" aria-label="Scrub water level and time"><svg viewBox="0 0 24 24" class="ico"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 3a7 7 0 1 1 0 14 7 7 0 0 1 0-14zm0 3a4 4 0 1 0 0 8 4 4 0 0 0 0-8z" fill-rule="evenodd"/></svg></button>
+      <button class="fab glass" id="btnTime" aria-label="Time and weather"><svg viewBox="0 0 24 24" class="ico"><path d="M12 7a5 5 0 1 0 0 10 5 5 0 0 0 0-10zM11 1h2v3h-2zm0 19h2v3h-2zM3.5 4.9l1.4-1.4 2.1 2.1-1.4 1.4zm13 13 1.4-1.4 2.1 2.1-1.4 1.4zM1 11h3v2H1zm19 0h3v2h-3zM3.5 19.1l2.1-2.1 1.4 1.4-2.1 2.1zm13-13 2.1-2.1 1.4 1.4-2.1 2.1z"/></svg></button>
+      <button class="fab glass" id="btnLocate" aria-label="Where am I"><svg viewBox="0 0 24 24" class="ico"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8zm9 3h-2.1A7 7 0 0 0 13 5.1V3h-2v2.1A7 7 0 0 0 5.1 11H3v2h2.1a7 7 0 0 0 5.9 5.9V21h2v-2.1a7 7 0 0 0 5.9-5.9H21zm-9 6a5 5 0 1 1 0-10 5 5 0 0 1 0 10z"/></svg></button>
+      <button class="fab glass hidden" id="btnGyro" aria-label="Look around by moving your phone"><svg viewBox="0 0 24 24" class="ico"><path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2zm0 3v13h10V5zm5 15.2a1 1 0 1 0 0-2 1 1 0 0 0 0 2zM2.5 8.5 1 7.1A11 11 0 0 1 4.6 3l1.2 1.6A9 9 0 0 0 2.5 8.5zm19 0a9 9 0 0 0-3.3-3.9L19.4 3A11 11 0 0 1 23 7.1z"/></svg></button>
+      <button class="fab glass" id="btnFish" aria-label="Fishing conditions and spot scout"><svg viewBox="0 0 24 24" class="ico"><path d="M2 12c2.5-3.2 6-5 9.5-5 3.6 0 6.6 1.9 8.5 5-1.9 3.1-4.9 5-8.5 5-3.5 0-7-1.8-9.5-5zm0 0-1-3v6zm14-1.2a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4z"/></svg></button>
+      <button class="fab glass" id="btnGallery" aria-label="Historical photos and newspapers"><svg viewBox="0 0 24 24" class="ico"><path d="M4 4h12a2 2 0 0 1 2 2v1h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-1H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2zm3 5v9h12V9zm2 7 2.5-3 1.8 2.2L15.5 12l2.5 4zM4 6v9h1V9a2 2 0 0 1 2-2h9V6z"/></svg></button>
+      <button class="fab glass" id="btnPhoto" aria-label="Photo mode"><svg viewBox="0 0 24 24" class="ico"><path d="M9 3 7.2 5H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-3.2L15 3zm3 15a5 5 0 1 1 0-10 5 5 0 0 1 0 10zm0-2a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg></button>
+    </nav>
+
+    <!-- vertical controls for fly / dive -->
+    <div class="updown hidden" id="updown">
+      <button class="fab glass" id="btnUp" aria-label="Up">▲</button>
+      <button class="fab glass" id="btnDown" aria-label="Down">▼</button>
+    </div>
+
+    <!-- info card -->
+    <section class="card glass hidden" id="card">
+      <button class="ib close" id="cardClose" aria-label="Close">✕</button>
+      <div class="kind" id="cardKind"></div>
+      <h2 id="cardTitle"></h2>
+      <div class="meta" id="cardMeta"></div>
+      <p id="cardDesc"></p>
+      <div class="era hidden" id="cardEra"></div>
+      <div class="body hidden" id="cardBody"></div>
+      <details class="srcs hidden" id="cardSources"><summary>Sources</summary><ul id="cardSrcList"></ul></details>
+      <div class="ask" id="cardAsk">
+        <div class="chips sugg" id="askSugg"></div>
+        <div class="log" id="askLog"></div>
+        <form id="askForm" autocomplete="off">
+          <input id="askIn" type="text" maxlength="300" placeholder="Ask about this place…" enterkeyhint="send" />
+          <button class="chip acc" type="submit">Ask</button>
+        </form>
+        <div class="fine">Questions go to a free third-party AI service. Answers use this map’s sources and can be wrong.</div>
+      </div>
+      <div class="row">
+        <button class="chip" id="cardFly">Fly here</button>
+        <button class="chip" id="cardWalk">Walk here</button>
+        <a class="chip" id="cardSrc" target="_blank" rel="noopener">Source</a>
+        <button class="chip hidden" id="cardPhotos">Photos</button>
+        <button class="chip" id="cardShare">Share</button>
+      </div>
+    </section>
+
+    <!-- probe popup -->
+    <div class="probe glass hidden" id="probe"></div>
+
+    <!-- bottom: drain panel + modes -->
+    <footer class="bottom">
+      <section class="drain glass" id="drain">
+        <div class="drain-head" id="drainHead">
+          <div>
+            <div class="lvl"><span id="lvlFt">578.0</span><small> ft</small></div>
+            <div class="sub" id="lvlSub">Full pool</div>
+            <button class="live hidden" id="btnToday" aria-label="Set today's real level"><i></i><span id="todayLbl"></span></button>
+          </div>
+          <div class="drain-btns">
+            <button class="round" id="btnRefill" aria-label="Refill">⟲</button>
+            <button class="round big" id="btnPlay" aria-label="Drain the lake"><span id="playIco">▼</span></button>
+            <button class="round" id="btnSpeed" aria-label="Speed"><span id="speedLbl">1×</span></button>
+          </div>
+        </div>
+        <div class="slider-wrap">
+          <input type="range" id="level" min="385" max="592" step="0.1" value="578" aria-label="Water level (feet)" />
+          <div class="ticks" id="ticks"></div>
+        </div>
+        <div class="stats" id="stats">
+          <div><b id="stVol">2.15M</b><span>acre-ft</span></div>
+          <div><b id="stPct">100%</b><span>full</span></div>
+          <div><b id="stArea">40,100</b><span>acres wet</span></div>
+          <div><b id="stDry">0</b><span>acres exposed</span></div>
+        </div>
+        <div class="more" id="drainMore">
+          <svg id="chart" viewBox="0 0 300 90" preserveAspectRatio="none"></svg>
+          <p class="fact" id="fact"></p>
+        </div>
+      </section>
+      <nav class="modes glass" id="modes">
+        <button data-mode="earth" class="on">Earth</button>
+        <button data-mode="drone">Fly</button>
+        <button data-mode="walk">Walk</button>
+        <button data-mode="dive">Dive</button>
+        <button data-mode="tour">Tours</button>
+      </nav>
+    </footer>
+
+    <!-- sheets -->
+    <section class="sheet glass hidden" id="sheetLayers">
+      <header><h3>Layers &amp; display</h3><button class="ib close" data-close>✕</button></header>
+      <div class="group">
+        <label>Imagery</label>
+        <div class="seg" id="segImagery"><button data-v="esri">Esri hi-res</button><button data-v="usgs">USGS NAIP</button></div>
+      </div>
+      <div class="group">
+        <label>Glowing highlights</label>
+        <div class="toggles">
+          <label class="tg neon bike"><input type="checkbox" id="tgBike" /><span>Mountain-bike trails</span></label>
+          <label class="tg neon hike"><input type="checkbox" id="tgHike" /><span>Hiking trails</span></label>
+          <label class="tg neon road"><input type="checkbox" id="tgRoads" /><span>Main roads</span></label>
+        </div>
+      </div>
+      <div class="group">
+        <label>Travel in time</label>
+        <div class="chips" id="eraFilter">
+          <button class="chip on" data-e="all">All of time</button><button class="chip" data-e="deep">Deep time</button>
+          <button class="chip" data-e="native">Before 1541</button><button class="chip" data-e="frontier">1541–1835</button>
+          <button class="chip" data-e="valley">1836–1951: the valley</button><button class="chip" data-e="lake">1952–today: the lake</button>
+        </div>
+      </div>
+      <div class="group">
+        <label>Show markers</label>
+        <div class="chips" id="kindFilter">
+          <button class="chip on" data-k="history">History</button><button class="chip on" data-k="native">Native history</button>
+          <button class="chip on" data-k="geology">Deep time</button><button class="chip on" data-k="landmark">Landmarks</button>
+          <button class="chip on" data-k="town">Towns</button><button class="chip on" data-k="recreation">Recreation</button>
+          <button class="chip on" data-k="park">Parks &amp; trails</button><button class="chip on" data-k="dam">Lake &amp; dam</button>
+        </div>
+      </div>
+      <div class="toggles">
+        <label class="tg"><input type="checkbox" id="tgLabels" checked /><span>Place labels</span></label>
+        <label class="tg"><input type="checkbox" id="tgOldMap" /><span>1890s USGS survey map</span></label>
+        <label class="tg"><input type="checkbox" id="tgSonar" /><span>Depth chart (sonar)</span></label>
+        <label class="tg"><input type="checkbox" id="tgContours" /><span>Contour lines</span></label>
+        <label class="tg"><input type="checkbox" id="tgAttractors" checked /><span>Fish attractors (AGFC)</span></label>
+        <label class="tg"><input type="checkbox" id="tgTrees" checked /><span>3D trees &amp; stumps</span></label>
+        <label class="tg"><input type="checkbox" id="tgClouds" checked /><span>Clouds</span></label>
+        <label class="tg"><input type="checkbox" id="tgHD" checked /><span>1 m lidar terrain up close</span></label>
+        <label class="tg"><input type="checkbox" id="tgFps" /><span>Show frame rate</span></label>
+      </div>
+      <div class="group">
+        <label>Vertical exaggeration</label>
+        <div class="seg" id="segExag"><button data-v="1">1×</button><button data-v="1.5">1.5×</button><button data-v="2">2×</button><button data-v="3">3×</button></div>
+      </div>
+      <div class="group">
+        <label>Graphics</label>
+        <div class="seg" id="segQuality"><button data-v="low">Battery</button><button data-v="medium">Balanced</button><button data-v="high">High</button><button data-v="ultra">Ultra</button></div>
+      </div>
+      <button class="chip wide" id="btnAbout">About, data &amp; credits</button>
+    </section>
+
+    <section class="sheet glass hidden" id="sheetTime">
+      <header><h3>Time &amp; weather</h3><button class="ib close" data-close>✕</button></header>
+      <div class="group">
+        <label>Time of day <b id="timeLbl"></b></label>
+        <input type="range" id="hour" min="0" max="24" step="0.05" value="16" />
+        <div class="mini-row"><span id="sunrise"></span><button class="chip sm" id="btnNow">Now</button><span id="sunset"></span></div>
+      </div>
+      <div class="group">
+        <label>Season <b id="monthLbl"></b></label>
+        <input type="range" id="month" min="0" max="11" step="1" value="10" />
+      </div>
+      <div class="group">
+        <label>Sky</label>
+        <div class="chips" id="weather">
+          <button data-w="clear">Clear</button>
+          <button data-w="fair">Fair</button>
+          <button data-w="cloudy">Cloudy</button>
+          <button data-w="overcast">Overcast</button>
+          <button data-w="fog">Valley fog</button>
+          <button data-w="haze">Summer haze</button>
+        </div>
+      </div>
+      <div class="group">
+        <label>Wind on the water</label>
+        <input type="range" id="wind" min="0" max="1" step="0.01" value="0.35" />
+      </div>
+    </section>
+
+    <section class="sheet glass hidden" id="sheetTours">
+      <header><h3>Tours</h3><button class="ib close" data-close>✕</button></header>
+      <div class="tours" id="tourList"></div>
+    </section>
+
+    <section class="sheet glass hidden tall" id="sheetFish">
+      <header><h3>Fishing: live conditions</h3><button class="ib close" data-close>✕</button></header>
+      <div class="fish-grid" id="fishGrid"><p class="fine">Loading live conditions…</p></div>
+      <div class="fish-moon" id="fishMoon"></div>
+      <div class="fish-fc" id="fishFc"></div>
+      <label class="tg"><input type="checkbox" id="tgAttractors2" checked /><span>Show AGFC fish attractors (brush piles)</span></label>
+      <h4 class="fish-h">Scout the spot under the crosshair</h4>
+      <div class="fish-spot" id="fishSpot"></div>
+      <h4 class="fish-h">Scout report for this spot, today</h4>
+      <ul class="fish-report" id="fishReport"><li>Move the map to a spot on the water…</li></ul>
+      <h4 class="fish-h">Ask the guide</h4>
+      <div class="ask" id="fishAsk">
+        <div class="chips sugg" id="fishSugg"></div>
+        <div class="log" id="fishLog"></div>
+        <form id="fishForm" autocomplete="off">
+          <input id="fishIn" type="text" maxlength="300" placeholder="Ask the fishing guide about this spot…" enterkeyhint="send" />
+          <button class="chip acc" type="submit">Ask</button>
+        </form>
+        <div class="fine">Pan the map to move the crosshair. You know the water; the guide knows the data. Depths below the lidar-measured shallows come from the modelled lake bed; water temperature is an estimate from recent weather.</div>
+      </div>
+    </section>
+    <div class="crosshair hidden" id="crosshair"></div>
+
+    <section class="sheet glass hidden tall" id="sheetGallery">
+      <header><h3 id="galTitle">Photos &amp; newspapers</h3><button class="ib close" data-close>✕</button></header>
+      <div class="chips gal-f" id="galFilter">
+        <button class="chip on" data-f="all">All</button><button class="chip" data-f="old">Before 1970</button>
+        <button class="chip" data-f="news">Newspapers</button><button class="chip" data-f="here">Near this place</button>
+      </div>
+      <div class="gal" id="galGrid"></div>
+      <p class="fine">Only public-domain and openly licensed images are shown, each with its credit. Newspaper text is machine-read and may contain errors.</p>
+    </section>
+
+    <div class="lightbox hidden" id="lightbox" role="dialog" aria-label="Photo">
+      <button class="ib close" id="lbClose" aria-label="Close">✕</button>
+      <button class="ib lb-nav prev" id="lbPrev" aria-label="Previous">‹</button>
+      <button class="ib lb-nav next" id="lbNext" aria-label="Next">›</button>
+      <figure><img id="lbImg" alt="" /><figcaption>
+        <div class="lb-t" id="lbTitle"></div><div class="lb-m" id="lbMeta"></div><div class="lb-d" id="lbDesc"></div>
+        <div class="row"><a class="chip" id="lbSrc" target="_blank" rel="noopener">Original &amp; licence</a><button class="chip" id="lbMap">Show on map</button></div>
+      </figcaption></figure>
+    </div>
+
+    <section class="sheet glass hidden tall" id="sheetAbout">
+      <header><h3>Drain the Ouachita</h3><button class="ib close" data-close>✕</button></header>
+      <div class="about" id="about"></div>
+    </section>
+
+    <div class="toast glass hidden" id="toast"></div>
+    <div class="fps hidden" id="fps"></div>
+    <div class="hint" id="hint"></div>
+  </div>
+
+  <div id="loading">
+    <div class="ld-inner">
+      <div class="ld-title">Drain the Ouachita</div>
+      <div class="ld-sub">Lake Ouachita · Arkansas</div>
+      <div class="ld-bar"><i id="ldBar"></i></div>
+      <div class="ld-msg" id="ldMsg">Loading lidar terrain…</div>
+    </div>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

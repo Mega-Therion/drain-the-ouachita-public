@@ -1,0 +1,15 @@
+{
+  "name": "Drain the Ouachita",
+  "short_name": "Ouachita 3D",
+  "description": "3D flyover and walkthrough of Lake Ouachita, Arkansas, with a lake you can drain.",
+  "start_url": "/",
+  "display": "fullscreen",
+  "orientation": "any",
+  "background_color": "#0a0f14",
+  "theme_color": "#0a0f14",
+  "icons": [
+    { "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" },
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
