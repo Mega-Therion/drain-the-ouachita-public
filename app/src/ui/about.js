@@ -57,6 +57,6 @@ export function ABOUT_HTML(manifest, pois) {
   <li>Ask feature: free AI models via OpenRouter, answering only from the sources above</li>
   <li>Rendering: three.js; trees adapted from ez-tree (MIT)</li>
 </ul>
-<p style="margin-top:14px;color:#9fb0bc">Created by R.W. Yett.</p>
+<p style="margin-top:14px;color:#9fb0bc">Created by R.W. Yett. Open source (Apache-2.0): <a href="https://github.com/Mega-Therion/drain-the-ouachita-public" target="_blank" rel="noopener">source code on GitHub</a>.</p>
 `;
 }

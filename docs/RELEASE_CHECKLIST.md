@@ -16,7 +16,7 @@ The app is live at https://drain-the-ouachita.vercel.app. Every push to `main` d
 ## Privacy
 
 - [ ] The private place names and radius live only in the untracked `cache/privacy_blur.json` and in the `ASK_BLOCKLIST` env var on Vercel. Nothing in the tracked code names them.
-- [ ] Earlier commits did contain those names. **Before the repo goes public, publish it from a fresh history** (a new repo with a single squashed commit) rather than flipping this one to public.
+- [x] Published from a fresh history on 2026-11-04: https://github.com/Mega-Therion/drain-the-ouachita-public (this development repo stays private; earlier commits here contained the names).
 - [ ] No personal contact details anywhere on the site or in the repo.
 
 ## Licences and credits
@@ -27,7 +27,7 @@ The app is live at https://drain-the-ouachita.vercel.app. Every push to `main` d
 
 ## Product
 
-- [ ] Phone test at about 400 px wide:
+- [x] Phone test at about 400 px wide (Chrome's real touch pipeline at 400×860; pinch, tilt, twist, flick, double-tap-drag, panel scroll):
   - info panel, ask box, gallery and viewer;
   - all tours, including `?tour=doc`, `?tour=west` and `?tour=native`;
   - share links (`?poi=<id>`).

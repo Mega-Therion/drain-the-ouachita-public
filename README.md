@@ -2,7 +2,7 @@
 
 A 3D model of Lake Ouachita, Arkansas, that runs in a phone browser and lets you drain the lake. Fly over it like Google Earth, walk the shore at street level, dive under the surface, then lower the water to the old riverbed and walk the valley that has been underwater since the 1950s.
 
-**Live:** https://drain-the-ouachita.vercel.app
+**Live:** https://drain-the-ouachita.vercel.app · **Source:** https://github.com/Mega-Therion/drain-the-ouachita-public
 
 ## What's real and what's modelled
 
