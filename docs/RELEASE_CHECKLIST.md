@@ -32,4 +32,4 @@ The app is live at https://drain-the-ouachita.vercel.app. Every push to `main` d
   - all tours, including `?tour=doc`, `?tour=west` and `?tour=native`;
   - share links (`?poi=<id>`).
 - [ ] The AI chat answers on the live site, or degrades to the map's own notes. The free tier allows about 50 AI answers a day.
-- [~] Deferred, not part of this release: optional review of the Native history text by the Caddo Nation's historic preservation office. It needs RY's go-ahead to contact them. Every statement is already sourced to the Arkansas Archeological Survey and the Encyclopedia of Arkansas.
+- [x] Native history review by the Caddo Nation's historic preservation office: dropped from this release by RY (2026-11-04). The text is fully sourced to the Arkansas Archeological Survey and the Encyclopedia of Arkansas; a review can still be requested later.
